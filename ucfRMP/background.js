@@ -54,7 +54,6 @@ async function searchProfessor(name) {
         }
 
         // Try each professor until we find one from UCF
-        // Verify each one is from UCF before returning
         for (let i = 0; i < uniqueProfIDs.length; i++) {
             const profID = uniqueProfIDs[i];
             
@@ -105,8 +104,6 @@ async function searchProfessor(name) {
                         const profNameParts = profName.split(/\s+/).filter(p => p.length > 0);
                         
                         // More lenient matching: check if key name parts match
-                        // For 2-part names (first last), both parts should match
-                        // For 3+ part names, at least first and last should match
                         if (nameParts.length >= 2 && profNameParts.length >= 2) {
                             // Check if first and last name parts match
                             const firstMatches = nameParts[0] === profNameParts[0] || 
@@ -122,7 +119,7 @@ async function searchProfessor(name) {
                             }
                         }
                         
-                        // Fallback: check if all search name parts appear in professor name
+                        // Check if all search name parts appear in professor name
                         const allPartsMatch = nameParts.every(searchPart => 
                             profNameParts.some(profPart => 
                                 profPart.includes(searchPart) || searchPart.includes(profPart) ||
@@ -138,16 +135,11 @@ async function searchProfessor(name) {
                 }
             }
             
-            // Note: We'll check name matching later, but don't skip yet
-            // If school verification passes, we'll be more lenient with name matching
-
             // Check if this professor is from UCF by looking for school ID in the HTML
-            // STRICT: Must find UCF school ID (1443), reject if any non-UCF school ID found
             let isUCF = false;
             let foundSchoolInfo = false;
             let foundNonUCFSchool = false;
             
-            // Pattern 1: Look for schoolId in JSON (most reliable)
             // Find ALL school IDs to check for conflicts
             // Try multiple patterns to catch different JSON structures
             const allSchoolIds = new Set();
@@ -254,13 +246,11 @@ async function searchProfessor(name) {
             // 3. If we can't find school info, skip (require verification)
             if (isUCF) {
                 // Verified UCF school - accept even if name matching failed
-                // (since we searched within UCF, the first result is likely correct)
-                // Name matching is a bonus check but not required if school is verified
             } else if (foundSchoolInfo && !isUCF) {
                 // Found school info but it's not UCF, skip
                 continue;
             } else {
-                // Can't verify school, skip (require explicit verification)
+                // Can't verify school, skip
                 continue;
             }
             
