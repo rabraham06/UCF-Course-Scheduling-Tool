@@ -11,8 +11,6 @@
       if (!name) return;
 
       name = name.replace(/to be announced/gi, "").trim();
-
-      // If multiple professors are listed (comma-separated), use only the first one
       // Split by comma and take the first name, also handle newlines
       const nameParts = name.split(/[,\n]/);
 
