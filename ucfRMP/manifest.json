@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "UCF RMP Helper",
+  "version": "1.0",
+  "description": "Shows RateMyProfessor ratings next to instructors on UCF Class Search.",
+
+  "permissions": ["storage", "tabs"],
+  "host_permissions": [
+    "https://www.ratemyprofessors.com/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.ucf.edu/*",
+        "*://csprod-ss.net.ucf.edu/*",
+        "*://*/psc/*",
+        "*://*/psp/*"
+      ],
+      "js": ["rmp_inject.js"],
+      "all_frames": true,
+      "run_at": "document_end"
+    }
+  ]
+}
